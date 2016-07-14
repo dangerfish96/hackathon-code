@@ -1,0 +1,42 @@
+
+*******************************************************
+README - ths readme provides background on the 
+         standalone i2rsd_conf program 
+         that allows the user to test 
+         communication with
+
+ version 0.1  
+
+ Status - not even building, very rough code
+          with final skelton  
+
+ What you will find here 
+ 
+   1) joint files with qugga-1.0.20160315
+   2) files from confd release for 
+       initial simple input 
+   3) yang models 
+    a) ietf-i2rs-rib 
+
+       ietf-i2rs_rib@2016-03-16 
+      draft-ietf-i2rs-data-model-05a
+ 
+      (will be updated 0.2)[before iet96 hackathon]  
+      draft-ietf-i2rs-data-model-06
+      ietf-i2rs-fib@2016-07-100  
+
+    b)  ietf-interfaces  
+        revision [2014-05-08]  
+        RFC7223 
+
+   4) associated creations from yang 
+      *.fxs - cdb - for confd CDB databae
+      *.h   - cdb - define yang keywords  
+
+      ietf-i2rs-rib.fxs - for confd CDB database
+      ietf-i2rs-rib.h   -  defines for key words
+
+   5)  ./zebra-lib -      ./lib *.h files  
+       ./zebra-include -  ./zebra *.h file    
+  
+          

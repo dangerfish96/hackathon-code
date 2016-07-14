@@ -1,0 +1,29 @@
+
+There are 4 README FILES 
+ 
+1. 0-README-I2RS - which is this file giving an overview
+2. 1-README-start - which provides an intro to CONFD
+3. 2-README-query - which provides an intro to query for dhcapd.conf 
+                    example this was taken from 
+4. 3-README-I2RS - which describes the files gated.,
+
+  directories are named to indicate content
+   zebra-include - from quagga-1.0.201603155/zebra/*.h 
+   zebra-lib    -  from quagga-1.0.201603155/lib/*
+     
+  
+
+
+
+
+
+Better resources are on the github page 
+
+1.) confd-manual 
+2.) I2RSD documentation (on Friday) 
+3.) yumapro-cli 
+
+Tar files for all code 
+ 
+1) confd-6.1 -   tar file 
+2) i2rsd  -  tar for gated/confd    
