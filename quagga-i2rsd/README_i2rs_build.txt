@@ -15,7 +15,7 @@ cd quagga-i2rs
 
 3. Remove installed Quagga
 sudo apt-get purge --auto-remove quagga
-sudo apt-get purge --auto-removequagga 
+sudo apt-get autoremove quagga 
 
 4. Delete manually installed library
 sudo rm /usr/local/lib/libospf*
