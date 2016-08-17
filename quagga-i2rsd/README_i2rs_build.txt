@@ -23,9 +23,9 @@ sudo rm /usr/local/lib/libzebra*
 sudo rm -rf /usr/lib/quagga
 
 5. Get Quagga source code for Ubuntu:
-wget --no-proxy https://launchpad.net/ubuntu/+archive/primary/+files/quagga_1.0.20160315-1.dsc
-wget --no-proxy https://launchpad.net/ubuntu/+archive/primary/+files/quagga_1.0.20160315.orig.tar.xz
-wget --no-proxy https://launchpad.net/ubuntu/+archive/primary/+files/quagga_1.0.20160315-1.debian.tar.xz
+wget --no-proxy https://github.com/i2rs-wg/hackathon-code/raw/master/quagga-i2rsd/quagga_1.0.20160315-1.debian.tar.xz
+wget --no-proxy https://raw.githubusercontent.com/i2rs-wg/hackathon-code/master/quagga-i2rsd/quagga_1.0.20160315-1.dsc
+wget --no-proxy https://github.com/i2rs-wg/hackathon-code/raw/master/quagga-i2rsd/quagga_1.0.20160315.orig.tar.xz
 
 6. Extract the sources:
 dpkg-source -x quagga_1.0.20160315-1.dsc
