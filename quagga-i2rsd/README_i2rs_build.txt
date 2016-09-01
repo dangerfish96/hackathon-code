@@ -8,6 +8,7 @@ unset ftp_proxy
 unset FTP_PROXY
 unset HTTP_PROXY
 unset HTTPS_PROXY
+as root edit the file /etc/environment , it must contain only one line i.e. '$PATH:...' and nothing else
 
 2. Create work folder:
 mkdir quagga-i2rs
