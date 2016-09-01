@@ -17,10 +17,11 @@ cd quagga-i2rs
 sudo apt-get purge --auto-remove quagga
 sudo apt-get autoremove quagga 
 
-4. Delete manually installed library
+4. Delete manually installed library and binaries
 sudo rm /usr/local/lib/libospf*
 sudo rm /usr/local/lib/libzebra*
 sudo rm -rf /usr/lib/quagga
+sudo rm /usr/local/sbin/*
 
 5. Get Quagga source code for Ubuntu:
 wget --no-proxy https://github.com/i2rs-wg/hackathon-code/raw/master/quagga-i2rsd/quagga_1.0.20160315-1.debian.tar.xz
