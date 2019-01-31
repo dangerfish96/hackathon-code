@@ -68,11 +68,17 @@ class SimpleTopo(Topo):
             router = self.addSwitch('r010_%d' % (i+1))
             routers.append(router)
 
+        #create controller
+        hosts.append(self.addHost('h010_c'))
+
+
         # add link between routers
         for i in xrange(num_router-1):
             self.addLink('r010_%d' % (i+1), 'r010_%d' % (i+2))
         self.addLink('r010_5', 'r010_1')
-        
+       
+
+ 
         # create and attach one host per router
 	for i in xrange(num_router):
             router = 'r010_%d' % (i+1)
@@ -107,6 +113,9 @@ class SimpleTopo(Topo):
             hosts.append(host)
             self.addLink(router, host)
 
+        #add link between controller and all routers
+        for i in xrange(num_router):
+            self.addLink('r010_%d' % (i+1), 'h010_c')
         return
 
 # Define host IP
@@ -152,54 +161,66 @@ def getGateway(hostname):
 
 # Start the routing daemons
 # When a I2RS daemon is ready add it to the routers you want it to run, probably run:
-# router.cmd("/usr/lib/quagga/i2rsd -f conf/i2rsd-%s.conf -d -i /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name, router.name))
+# router.cmd("/usr/local/sbin/i2rsd -f conf/i2rsd-%s.conf -d -i /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name, router.name))
 # router.waitOutput()
 def startRouting(router):
     if router.name == "r010_1":
-        router.cmd("/usr/lib/quagga/zebra -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
+        router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
-        router.cmd("/usr/lib/quagga/ospfd -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
         router.waitOutput()
-        router.cmd("/usr/lib/quagga/bgpd -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/bgpd -u root -g root -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
         router.waitOutput()
         #copy the two lines below to add the i2rs daemon to other routers, don't forget to create a config file in the conf folder
-        router.cmd("/usr/lib/quagga/i2rsd -f conf/i2rsd-%s.conf -d -i /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
         router.waitOutput()
         log("Starting zebra and ospfd, bgpd i2rsd on %s" % router.name)
     elif router.name == "r010_2":
-        router.cmd("/usr/lib/quagga/zebra -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
+        router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
-        router.cmd("/usr/lib/quagga/ospfd -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.waitOutput()
+        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
         router.waitOutput()
         log("Starting zebra and ospfd on %s" % router.name)
     elif router.name == "r010_3":
-        router.cmd("/usr/lib/quagga/zebra -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
+        router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
-        router.cmd("/usr/lib/quagga/ospfd -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.waitOutput()
+        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
         router.waitOutput()
         log("Starting zebra and ospfd on %s" % router.name)
     elif router.name == "r010_4":
-        router.cmd("/usr/lib/quagga/zebra -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
+        router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
-        router.cmd("/usr/lib/quagga/ospfd -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.waitOutput()
+        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
         router.waitOutput()
         log("Starting zebra and ospfd on %s" % router.name)
     elif router.name == "r010_5":
-        router.cmd("/usr/lib/quagga/zebra -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
+        router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
-        router.cmd("/usr/lib/quagga/ospfd -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.waitOutput()
+        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
         router.waitOutput()
         log("Starting zebra and ospfd on %s" % router.name)
     elif router.name == "r100_1":
-        router.cmd("/usr/lib/quagga/zebra -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
+        router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
-        router.cmd("/usr/lib/quagga/bgpd -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/bgpd -u root -g root -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.waitOutput()
+        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
         router.waitOutput()
         log("Starting zebra and bgpd on %s" % router.name)
     elif router.name == "r200_1":
-        router.cmd("/usr/lib/quagga/zebra -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
+        router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
-        router.cmd("/usr/lib/quagga/bgpd -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/bgpd -u root -g root -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+        router.waitOutput()
+        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
         router.waitOutput()
         log("Starting zebra and bgpd on %s" % router.name)
     else:
@@ -209,7 +230,7 @@ def startRouting(router):
 def main():
     os.system("rm -f /tmp/r*.log /tmp/r*.pid logs/*")
     os.system("mn -c >/dev/null 2>&1")
-    os.system("killall -9 zebra bgpd ospfd > /dev/null 2>&1")
+    os.system("killall -9 zebra bgpd ospfd i2rsd > /dev/null 2>&1")
 
     net = Mininet(topo=SimpleTopo(), switch=Router)
     net.start()
@@ -230,12 +251,18 @@ def main():
 #        using "ip cmd" leaves 10.0.0.x/8 ip on the interface of the hosts and 10.0.0.0/8 on the routing table
 #        host.cmd("ip a add %s dev %s-eth0" % (getIP(host.name), host.name))
 #        host.cmd("ip r add default via %s" % (getGateway(host.name)))
-        host.cmd("ifconfig %s-eth0 %s" % (host.name, getIP(host.name)))
-        host.cmd("route add default gw %s" % (getGateway(host.name)))
+        if(host.name == 'h010_c'):
+            for intfs in xrange(5):
+                print("%s-eth%i is set to 250.0.0.%i/24" % (host.name,intfs,intfs*2))
+                host.cmd("ip a a dev %s-eth%i 250.0.0.%i/24" % (host.name,intfs,intfs*2))
+        else:
+            host.cmd("ifconfig %s-eth0 %s" % (host.name, getIP(host.name)))
+            host.cmd("route add default gw %s" % (getGateway(host.name)))
+    
 
     CLI(net)
     net.stop()
-    os.system("killall -9 zebra bgpd ospfd")
+    os.system("killall -9 zebra bgpd ospfd i2rsd")
 
 if __name__ == "__main__":
     main()
