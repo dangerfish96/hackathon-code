@@ -159,6 +159,14 @@ def getGateway(hostname):
         gw = ''
     return gw
 
+def startNetconfd(router):
+    router.cmd("netconfd --datapath=startup-cfg.xml --port=830 --module=ietf-i2rs-rib --superuser=i2rs --ncxserver-sockname=/tmp/ncxserver-%s.sock > logs/%s-netconfd-stdout 2>&1 &" % (router.name, router.name), shell=True)
+    router.waitOutput()
+
+def startSshd(router):
+    router.cmd("sudo /usr/sbin/sshd2 -p830 -o 'PidFile /tmp/sshd-%s.pid' -o 'Subsystem netconf \"/usr/sbin/netconf-subsystem --ncxserver-sockname=830@/tmp/ncxserver-%s.sock\"' > logs/%s-sshd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
+    router.waitOutput()
+     
 # Start the routing daemons
 # When a I2RS daemon is ready add it to the routers you want it to run, probably run:
 # router.cmd("/usr/local/sbin/i2rsd -f conf/i2rsd-%s.conf -d -i /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name, router.name))
@@ -171,48 +179,55 @@ def startRouting(router):
         router.waitOutput()
         router.cmd("/usr/local/sbin/bgpd -u root -g root -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
         router.waitOutput()
-        #copy the two lines below to add the i2rs daemon to other routers, don't forget to create a config file in the conf folder
-        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/i2rsd -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1 &" % (router.name, router.name), shell=True)
         router.waitOutput()
+        startSshd(router)
+        startNetconfd(router)
         log("Starting zebra and ospfd, bgpd i2rsd on %s" % router.name)
     elif router.name == "r010_2":
         router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
         router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
         router.waitOutput()
-        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/i2rsd -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1 & " % (router.name, router.name), shell=True)
         router.waitOutput()
+        startSshd(router)
+        startNetconfd(router)
         log("Starting zebra and ospfd on %s" % router.name)
     elif router.name == "r010_3":
         router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
         router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
         router.waitOutput()
-        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/i2rsd -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1 &" % (router.name, router.name), shell=True)
         router.waitOutput()
+        startSshd(router)
+        startNetconfd(router)
         log("Starting zebra and ospfd on %s" % router.name)
     elif router.name == "r010_4":
         router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
         router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
         router.waitOutput()
-        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/i2rsd -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1 &" % (router.name, router.name), shell=True)
         router.waitOutput()
+        startSshd(router)
+        startNetconfd(router)
         log("Starting zebra and ospfd on %s" % router.name)
     elif router.name == "r010_5":
         router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
         router.cmd("/usr/local/sbin/ospfd -u root -g root -f conf/ospfd-%s.conf -d -i /tmp/ospfd-%s.pid > logs/%s-ospfd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
         router.waitOutput()
-        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
+        router.cmd("/usr/local/sbin/i2rsd -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1 &" % (router.name, router.name), shell=True)
         router.waitOutput()
+        startSshd(router)
+        startNetconfd(router)
         log("Starting zebra and ospfd on %s" % router.name)
     elif router.name == "r100_1":
         router.cmd("/usr/local/sbin/zebra -u root -g root -f conf/zebra-%s.conf -d -i /tmp/zebra-%s.pid > logs/%s-zebra-stdout 2>&1" % (router.name, router.name, router.name))
         router.waitOutput()
         router.cmd("/usr/local/sbin/bgpd -u root -g root -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
-        router.waitOutput()
-        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
         router.waitOutput()
         log("Starting zebra and bgpd on %s" % router.name)
     elif router.name == "r200_1":
@@ -220,17 +235,15 @@ def startRouting(router):
         router.waitOutput()
         router.cmd("/usr/local/sbin/bgpd -u root -g root -f conf/bgpd-%s.conf -d -i /tmp/bgpd-%s.pid > logs/%s-bgpd-stdout 2>&1" % (router.name, router.name, router.name), shell=True)
         router.waitOutput()
-        router.cmd("/usr/local/sbin/i2rsd -d -p /tmp/i2rsd-%s.pid > logs/%s-i2rsd-stdout 2>&1" % (router.name, router.name), shell=True)
-        router.waitOutput()
         log("Starting zebra and bgpd on %s" % router.name)
     else:
         log("WARNING: No routing deamon configured for %s." % (router.name))
     return
 
 def main():
-    os.system("rm -f /tmp/r*.log /tmp/r*.pid logs/*")
+    os.system("rm -f /tmp/r*.log /tmp/r*.pid logs/* /tmp/ncxserver*.sock")
     os.system("mn -c >/dev/null 2>&1")
-    os.system("killall -9 zebra bgpd ospfd i2rsd > /dev/null 2>&1")
+    os.system("killall -9 sshd2 netconfd zebra bgpd ospfd i2rsd > /dev/null 2>&1")
 
     net = Mininet(topo=SimpleTopo(), switch=Router)
     net.start()
@@ -253,8 +266,8 @@ def main():
 #        host.cmd("ip r add default via %s" % (getGateway(host.name)))
         if(host.name == 'h010_c'):
             for intfs in xrange(5):
-                print("%s-eth%i is set to 250.0.0.%i/24" % (host.name,intfs,intfs*2))
-                host.cmd("ip a a dev %s-eth%i 250.0.0.%i/24" % (host.name,intfs,intfs*2))
+                print("%s-eth%i is set to 10.250.0.%i/30" % (host.name,intfs,1+intfs*4))
+                host.cmd("ifconfig %s-eth%i 10.250.0.%i/30" % (host.name,intfs,1+intfs*4))
         else:
             host.cmd("ifconfig %s-eth0 %s" % (host.name, getIP(host.name)))
             host.cmd("route add default gw %s" % (getGateway(host.name)))
@@ -262,7 +275,7 @@ def main():
 
     CLI(net)
     net.stop()
-    os.system("killall -9 zebra bgpd ospfd i2rsd")
+    os.system("killall -9 sshd2 netconfd zebra bgpd ospfd i2rsd")
 
 if __name__ == "__main__":
     main()
